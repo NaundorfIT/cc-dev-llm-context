@@ -1,0 +1,21 @@
+# Local-only source notes (not part of the published guide).
+original context/
+
+# Local-only notes and secrets.
+*.local.md
+.env
+.env.*
+.DS_Store
+
+# MCP server build output and dependencies.
+mcp/dist/
+mcp/node_modules/
+node_modules/
+
+# LocalNet kickstart: downloaded upstream bundle and local env.
+localnet/.localnet/
+localnet/.env
+
+# DevNet validator kickstart: downloaded upstream bundle and local env (secrets).
+validator/.splice-bundle/
+validator/.env
