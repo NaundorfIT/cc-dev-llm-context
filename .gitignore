@@ -5,6 +5,9 @@ original context/
 *.local.md
 .env
 .env.*
+!.env.example
+!localnet/.env.example
+!validator/.env.example
 .DS_Store
 
 # MCP server build output and dependencies.

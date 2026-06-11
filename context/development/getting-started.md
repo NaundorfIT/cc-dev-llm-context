@@ -49,13 +49,17 @@ app at it. This repo ships a one-command wrapper:
 
 ```bash
 cd localnet && cp .env.example .env && make up
-make deploy-dar DAR=path/to/your.dar
+# Mint AUTH_TOKEN (required — see local-dev-stack.md#json-api-auth), then:
+AUTH_TOKEN="$AUTH_TOKEN" make deploy-dar DAR=path/to/your.dar
 ```
 
+Without `dpm`, smoke-test deploy with a bundle-shipped DAR after `make up`:
+`DAR=.localnet/splice-node/dars/splice-token-test-trading-app-1.0.0.dar`.
+
 - LocalNet wrapper and endpoints: [../../localnet/README.md](../../localnet/README.md)
-- Full guide (topology, ports, app wiring, LocalNet vs DevNet): [local-dev-stack.md](local-dev-stack.md)
+- Full guide (topology, ports, auth, app wiring): [local-dev-stack.md](local-dev-stack.md)
 - Inspect/debug a local ledger: [debugging-and-inspection.md](debugging-and-inspection.md)
-- LocalNet docs: https://docs.sync.global/app_dev/testing/localnet.html
+- LocalNet docs: https://docs.canton.network/sdks-tools/development-tools/localnet
 
 ## 6. Connect a UI
 

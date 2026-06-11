@@ -18,7 +18,7 @@ of truth, and ports/layout can change across Splice releases.
   path.
 
 LocalNet docs: https://docs.canton.network/sdks-tools/development-tools/localnet
-and https://docs.sync.global/app_dev/testing/localnet.html
+(release bundles: https://github.com/digital-asset/decentralized-canton-sync/releases)
 
 ## Topology
 
@@ -34,7 +34,7 @@ infrastructure:
   (Grafana/Prometheus/Loki).
 
 You can disable nodes/modules (profiles) to reduce memory; Docker Desktop should
-have at least 8 GB.
+have at least 8 GB and be running before `make up`.
 
 ## Port map
 
@@ -51,19 +51,58 @@ LocalNet uses a prefix-suffix port pattern.
 | Admin API | `localhost:2902` | `localhost:3902` |
 | Validator API | `localhost:2903` | `localhost:3903` |
 
-Web UIs: Wallet `http://wallet.localhost:3000`, Scan `http://scan.localhost:4000`,
-SV `http://sv.localhost:4000`. PostgreSQL on `localhost:5432`.
+Web UIs:
+
+| UI | URL |
+|----|-----|
+| app-user wallet | `http://wallet.localhost:2000` |
+| app-provider wallet | `http://wallet.localhost:3000` |
+| Scan | `http://scan.localhost:4000` |
+| Super Validator | `http://sv.localhost:4000` |
+
+PostgreSQL on `localhost:5432`.
+
+## JSON API auth
+
+The default LocalNet bundle ships with **unsafe JWT auth enabled** on participant
+JSON APIs (`unsafe-jwt-hmac-256`, HMAC secret `unsafe`, audience
+`https://canton.network.global`, ledger user `ledger-api-user`). Only
+`GET /v2/version` is anonymous; ledger-end, packages, ACS, and DAR upload all
+require `Authorization: Bearer <token>`.
+
+Mint a token for local scripting (also used by `make deploy-dar`):
+
+```bash
+export AUTH_TOKEN=$(python3 -c "
+import base64, hashlib, hmac, json
+def b64(b): return base64.urlsafe_b64encode(b).rstrip(b'=').decode()
+h = b64(json.dumps({'alg':'HS256','typ':'JWT'}).encode())
+p = b64(json.dumps({'sub':'ledger-api-user','aud':'https://canton.network.global'}).encode())
+s = b64(hmac.new(b'unsafe', f'{h}.{p}'.encode(), hashlib.sha256).digest())
+print(f'{h}.{p}.{s}')
+")
+```
+
+A bare `curl` without this header returns a generic 401 ("security-sensitive
+error") — not a stack failure. Optional Keycloak/OAuth2 compose profiles replace
+this with real IAM tokens.
 
 ## Workflow
 
 From [`localnet/`](../../localnet/README.md):
 
-1. `cp .env.example .env` and optionally pin `SPLICE_VERSION` / toggle nodes.
+1. Start Docker Desktop; `cp .env.example .env` and optionally pin
+   `SPLICE_VERSION` / toggle nodes.
 2. `make up` — downloads the official Splice LocalNet bundle on first run, then
    starts the stack (`make status` / `make logs` to watch first boot).
-3. Build your package with `dpm`, then `make deploy-dar DAR=path/to/your.dar`.
-4. Point your app and tools at the endpoints above.
-5. `make down` to stop, `make clean` to reset.
+3. Export `AUTH_TOKEN` (see above).
+4. Build your package with `dpm`, then
+   `AUTH_TOKEN="$AUTH_TOKEN" make deploy-dar DAR=path/to/your.dar`.
+   Without `dpm`, smoke-test with a bundle DAR:
+   `DAR=.localnet/splice-node/dars/splice-token-test-trading-app-1.0.0.dar`.
+5. Point your app and tools at the endpoints above (pass the bearer token on
+   JSON API calls).
+6. `make down` to stop, `make clean` to reset.
 
 ## Deploying a DAR
 
@@ -72,12 +111,12 @@ Upload a built `.dar` to a participant via the JSON Ledger API v2:
 ```bash
 curl -X POST "http://localhost:3975/v2/packages?vetAllPackages=true" \
   -H "Content-Type: application/octet-stream" \
+  -H "Authorization: Bearer $AUTH_TOKEN" \
   --data-binary @path/to/your.dar
 ```
 
-`vetAllPackages=true` vets the package on upload so it is immediately usable. If
-the OAuth2 profile is enabled, add `-H "Authorization: Bearer <token>"`. Verify
-with `GET /v2/packages`.
+`vetAllPackages=true` vets the package on upload so it is immediately usable.
+Verify with `GET /v2/packages` (same bearer token).
 
 Package management how-to: https://docs.canton.network/appdev/modules/m5-manage-daml-packages
 
@@ -90,8 +129,9 @@ A JSON-API application typically needs to know:
 - **Validator API** — `:2903` / `:3903`, for validator-scoped operations.
 - **Token-standard registry** — served by the validator/scan for CIP-56 assets;
   see [cip-56-integration.md](cip-56-integration.md).
-- **OAuth2 / Keycloak issuer** — the LocalNet IAM when the auth profile is on;
-  the submitting `user_id` must match the token subject (see
+- **JSON API bearer token** — unsafe JWT above by default; or Keycloak issuer
+  when the auth profile is on (submitting `user_id` must match the token
+  subject; see
   [external-signing-and-interactive-submission.md](external-signing-and-interactive-submission.md)).
 
 For client conventions (bootstrap, ACS, errors) see

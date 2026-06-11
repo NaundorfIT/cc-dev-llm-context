@@ -22,14 +22,21 @@ Daml Shell / packages how-to: https://docs.canton.network/appdev/modules/m5-mana
 ## Inspecting state over the JSON Ledger API
 
 For quick, scriptable inspection you do not need extra tooling — query the
-participant directly. Read the ledger end, then snapshot the ACS at that offset:
+participant directly. On **LocalNet**, the default bundle requires a bearer token
+on every endpoint except `/v2/version` (unsafe JWT; see
+[local-dev-stack.md](local-dev-stack.md#json-api-auth)). Export `AUTH_TOKEN`
+first, then pass `-H "Authorization: Bearer $AUTH_TOKEN"` on each call below.
+
+Read the ledger end, then snapshot the ACS at that offset:
 
 ```bash
 # Current offset
-curl -s http://localhost:3975/v2/state/ledger-end
+curl -s -H "Authorization: Bearer $AUTH_TOKEN" \
+  http://localhost:3975/v2/state/ledger-end
 
 # Active contracts at that offset (set activeAtOffset from the call above)
-curl -s http://localhost:3975/v2/state/active-contracts \
+curl -s -H "Authorization: Bearer $AUTH_TOKEN" \
+  http://localhost:3975/v2/state/active-contracts \
   -H "Content-Type: application/json" \
   -d '{
     "activeAtOffset": <offset>,
@@ -37,7 +44,8 @@ curl -s http://localhost:3975/v2/state/active-contracts \
   }'
 
 # Known packages
-curl -s http://localhost:3975/v2/packages
+curl -s -H "Authorization: Bearer $AUTH_TOKEN" \
+  http://localhost:3975/v2/packages
 ```
 
 These ACS/offset conventions (the 3.4+ `eventFormat` + `activeAtOffset` change,

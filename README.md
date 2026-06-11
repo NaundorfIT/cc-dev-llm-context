@@ -113,7 +113,8 @@ official upstream images; nothing third-party is vendored.
 
 ```bash
 cd localnet && cp .env.example .env && make up
-make deploy-dar DAR=path/to/your.dar
+# LocalNet JSON API auth is on by default — see localnet/README.md
+AUTH_TOKEN=... make deploy-dar DAR=path/to/your.dar
 ```
 
 See [localnet/README.md](localnet/README.md) and
@@ -207,7 +208,8 @@ end of July 2026.
 - [docs.daml.com](https://docs.daml.com)
 - [github.com/digital-asset](https://github.com/digital-asset)
 - [github.com/DACH-NY](https://github.com/DACH-NY)
-- [github.com/hyperledger-labs/splice](https://github.com/hyperledger-labs/splice)
+- [digital-asset/decentralized-canton-sync](https://github.com/digital-asset/decentralized-canton-sync) (Splice release bundles)
+- [canton-network/splice](https://github.com/canton-network/splice) (OSS source)
 - [Canton CIPs](https://github.com/canton-foundation/cips)
 - [Canton Development Fund](https://github.com/canton-foundation/canton-dev-fund)
 - [canton-network/splice issues](https://github.com/canton-network/splice/issues)

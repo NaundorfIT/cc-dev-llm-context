@@ -66,9 +66,11 @@ down: ## Stop LocalNet (keeps volumes)
 restart: down up ## Restart LocalNet
 
 status: ## Show running LocalNet containers
+	@test -f "$(LOCALNET_DIR)/compose.yaml" || { echo "LocalNet bundle not fetched; run 'make fetch' or 'make up' first."; exit 1; }
 	@$(COMPOSE) ps
 
 logs: ## Tail LocalNet logs (Ctrl-C to stop)
+	@test -f "$(LOCALNET_DIR)/compose.yaml" || { echo "LocalNet bundle not fetched; run 'make fetch' or 'make up' first."; exit 1; }
 	@$(COMPOSE) logs -f --tail=200
 
 ports: ## Print the common LocalNet endpoints
@@ -77,7 +79,8 @@ ports: ## Print the common LocalNet endpoints
 	@echo "  app-user   Admin API        : localhost:2902   Validator API: localhost:2903"
 	@echo "  app-provider Ledger API (gRPC): localhost:3901 JSON API: localhost:3975"
 	@echo "  app-provider Admin API      : localhost:3902   Validator API: localhost:3903"
-	@echo "  Wallet UI  : http://wallet.localhost:3000"
+	@echo "  app-user wallet    : http://wallet.localhost:2000"
+	@echo "  app-provider wallet: http://wallet.localhost:3000"
 	@echo "  Scan UI    : http://scan.localhost:4000"
 	@echo "  SV UI      : http://sv.localhost:4000"
 	@echo "  Postgres   : localhost:$${DB_PORT:-5432}"

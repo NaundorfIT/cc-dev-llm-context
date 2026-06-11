@@ -21,7 +21,9 @@ A local network that mirrors the Canton topology:
 
 ## Prerequisites
 
-- **Docker Desktop** with **>= 8 GB** memory allocated (disable nodes/observability to use less).
+- **Docker Desktop** running with **>= 8 GB** memory allocated (disable
+  nodes/observability to use less). Start Docker Desktop before `make up`; verify
+  with `docker info | grep -i memory`.
 - `curl`, `tar`, and GNU `make` (preinstalled on macOS/Linux).
 - Only needed to *build* a DAR (not to run LocalNet): the Daml toolchain (`dpm`, JDK 17+).
 
@@ -29,7 +31,7 @@ A local network that mirrors the Canton topology:
 
 ```bash
 cd localnet
-cp .env.example .env     # optional: pin SPLICE_VERSION, toggle nodes, set bundle URL
+cp .env.example .env     # optional: pin SPLICE_VERSION, toggle nodes
 make up                  # downloads the bundle on first run, then starts the stack
 make ports               # show the endpoints
 ```
@@ -42,7 +44,39 @@ make clean               # stop, remove volumes, delete the downloaded bundle
 ```
 
 > First boot pulls images and initializes the network; it can take several
-> minutes. Use `make status` and `make logs` to watch progress.
+> minutes. Use `make status` and `make logs` to watch progress (both require a
+> fetched bundle — run `make up` or `make fetch` first).
+
+## JSON API auth (default)
+
+The upstream LocalNet bundle enables **unsafe JWT auth by default**
+(`unsafe-jwt-hmac-256`, secret `unsafe`, audience `https://canton.network.global`,
+ledger user `ledger-api-user`). Only `GET /v2/version` works without a token;
+all other JSON Ledger API calls (ledger end, packages, DAR upload, ACS queries)
+return HTTP 401 unless you pass a bearer token.
+
+Mint a token and export it for the session:
+
+```bash
+export AUTH_TOKEN=$(python3 -c "
+import base64, hashlib, hmac, json
+def b64(b): return base64.urlsafe_b64encode(b).rstrip(b'=').decode()
+h = b64(json.dumps({'alg':'HS256','typ':'JWT'}).encode())
+p = b64(json.dumps({'sub':'ledger-api-user','aud':'https://canton.network.global'}).encode())
+s = b64(hmac.new(b'unsafe', f'{h}.{p}'.encode(), hashlib.sha256).digest())
+print(f'{h}.{p}.{s}')
+")
+```
+
+Verify:
+
+```bash
+curl -s -H "Authorization: Bearer $AUTH_TOKEN" http://localhost:3975/v2/state/ledger-end
+```
+
+If you enable the optional Keycloak/OAuth2 compose profile instead, use tokens
+from that IAM provider. See
+[../context/development/local-dev-stack.md](../context/development/local-dev-stack.md).
 
 ## Make targets
 
@@ -77,23 +111,39 @@ validator and the **suffix** identifies the service:
 | Admin API | `localhost:2902` | `localhost:3902` |
 | Validator API | `localhost:2903` | `localhost:3903` |
 
-Web UIs: Wallet `http://wallet.localhost:3000`, Scan `http://scan.localhost:4000`,
-SV `http://sv.localhost:4000`. Postgres on `localhost:5432`.
+Web UIs (NGINX on 127.0.0.1):
+
+| UI | URL |
+|----|-----|
+| app-user wallet | `http://wallet.localhost:2000` |
+| app-provider wallet | `http://wallet.localhost:3000` |
+| Scan | `http://scan.localhost:4000` |
+| Super Validator | `http://sv.localhost:4000` |
+
+Postgres on `localhost:5432`. If `*.localhost` does not resolve on your OS, add
+`127.0.0.1 wallet.localhost scan.localhost sv.localhost` to `/etc/hosts`.
 
 ## Deploy your DAR
 
 Build your DAR with `dpm`, then upload it to a participant (defaults to the
-app-provider JSON API on `:3975`):
+app-provider JSON API on `:3975`). **Set `AUTH_TOKEN` first** (see JSON API auth
+above):
 
 ```bash
-make deploy-dar DAR=/path/to/your-model.dar
+AUTH_TOKEN="$AUTH_TOKEN" make deploy-dar DAR=/path/to/your-model.dar
 ```
 
 This calls `POST /v2/packages?vetAllPackages=true` so the package is vetted on
-upload. If your LocalNet profile enables OAuth2, pass a token:
+upload.
+
+### Smoke test without `dpm`
+
+The downloaded bundle ships sample DARs under `.localnet/splice-node/dars/`.
+After `make up` and exporting `AUTH_TOKEN`:
 
 ```bash
-AUTH_TOKEN=... make deploy-dar DAR=/path/to/your-model.dar
+AUTH_TOKEN="$AUTH_TOKEN" make deploy-dar DAR=.localnet/splice-node/dars/splice-token-test-trading-app-1.0.0.dar
+curl -s -H "Authorization: Bearer $AUTH_TOKEN" http://localhost:3975/v2/packages
 ```
 
 ## Point an app at LocalNet
@@ -103,7 +153,7 @@ A JSON-API app (for example a non-custodial wallet) typically needs:
 - `PARTICIPANT_JSON_RPC` -> `http://localhost:2975` (app-user) or `http://localhost:3975` (app-provider)
 - `VALIDATOR_API` -> the validator API on `:2903` / `:3903`
 - `REGISTRY_API` -> the token-standard registry served by the validator/scan
-- Keycloak / OAuth2 issuer -> the LocalNet IAM when the auth profile is enabled
+- Bearer token for JSON API calls (unsafe JWT above, or Keycloak when that profile is on)
 
 See [../context/development/local-dev-stack.md](../context/development/local-dev-stack.md)
 for the full wiring and [../context/development/external-signing-and-interactive-submission.md](../context/development/external-signing-and-interactive-submission.md)
@@ -119,15 +169,19 @@ endpoint (e.g. `localhost:2901`).
 
 ## Troubleshooting
 
+- **Docker daemon not running:** start Docker Desktop, then `docker info` before `make up`.
 - **Containers unhealthy / OOM:** raise Docker memory, or set `APP_USER_PROFILE=off`
   (and/or `SV_PROFILE=off`) in `.env` to run fewer nodes.
-- **Download fails:** set `SPLICE_BUNDLE_URL` in `.env` to the official bundle
-  link from https://docs.sync.global/app_dev/testing/localnet.html.
+- **Download fails:** set `SPLICE_BUNDLE_URL` in `.env` to a release asset from
+  https://github.com/digital-asset/decentralized-canton-sync/releases (archive
+  name `${SPLICE_VERSION}_splice-node.tar.gz`). Pin `SPLICE_VERSION` to a published tag.
+- **401 / "security-sensitive error" on JSON API:** mint and pass `AUTH_TOKEN` (see above).
+- **`make status` / `make logs` before fetch:** run `make fetch` or `make up` first.
 - **Layout changed upstream:** if a new Splice release relocates the compose
   files, adjust `LOCALNET_DIR` in the [Makefile](Makefile).
 
 ## Sources
 
 - LocalNet (Canton Network Docs): https://docs.canton.network/sdks-tools/development-tools/localnet
-- LocalNet (Splice): https://docs.sync.global/app_dev/testing/localnet.html
+- Splice release bundles: https://github.com/digital-asset/decentralized-canton-sync/releases
 - cn-quickstart (richer full-stack reference): https://github.com/digital-asset/cn-quickstart

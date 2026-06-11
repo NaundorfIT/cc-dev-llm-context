@@ -36,7 +36,9 @@ source of truth. Tools: `canton_search`, `canton_doc`, `canton_list_topics`,
 
 [localnet/](localnet/) is a one-command wrapper around the official Splice
 LocalNet (three validators + synchronizer + wallet/scan UIs) for testing your own
-DAML/apps locally — no sponsor/VPN. `cd localnet && cp .env.example .env && make up`,
+DAML/apps locally — no sponsor/VPN. `cd localnet && cp .env.example .env && make up`
+(JSON API auth on by default — mint `AUTH_TOKEN` per localnet/README.md before
+`make deploy-dar`),
 then `make deploy-dar DAR=...`. It wraps upstream images; nothing third-party is
 vendored.
 
