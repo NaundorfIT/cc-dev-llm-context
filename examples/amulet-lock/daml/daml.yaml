@@ -1,0 +1,16 @@
+sdk-version: 3.5.1
+name: amulet-lock
+version: 1.0.0
+source: src
+dependencies:
+  - daml-prim
+  - daml-stdlib
+# Token-standard interface DARs from the Splice LocalNet bundle.
+# Run `make -C ../../localnet fetch` first (or `make build` here, which does it).
+data-dependencies:
+  - ../../../localnet/.localnet/splice-node/dars/splice-api-token-metadata-v1-1.0.0.dar
+  - ../../../localnet/.localnet/splice-node/dars/splice-api-token-holding-v1-1.0.0.dar
+  - ../../../localnet/.localnet/splice-node/dars/splice-api-token-allocation-v1-1.0.0.dar
+  - ../../../localnet/.localnet/splice-node/dars/splice-api-token-allocation-request-v1-1.0.0.dar
+build-options:
+  - --target=2.1

@@ -105,7 +105,10 @@ and https://docs.sync.global/app_dev/daml_models/index.html
 
 For building wallets or integrating assets, start with
 [cip-56-integration.md](cip-56-integration.md), which covers holdings,
-transfers, preapprovals, and DvP-style flows. Token Standard APIs:
+transfers, preapprovals, and DvP-style flows. For a runnable allocation lock
+example and registry write-path details, see
+[cip-56-allocation-lock-learnings.md](cip-56-allocation-lock-learnings.md).
+Token Standard APIs:
 https://docs.sync.global/app_dev/token_standard/index.html
 
 ## Tooling
@@ -151,5 +154,8 @@ See [getting-started.md](getting-started.md) for the end-to-end build path.
 - [Canton error handling](canton-error-handling.md)
 - [App rewards and markers](app-rewards-and-markers.md)
 - [CIP-56 integration](cip-56-integration.md)
+- [CIP-56 allocation lock learnings](cip-56-allocation-lock-learnings.md)
+- [Amulet lock sample app](../../examples/amulet-lock/)
+- [Examples index](../../examples/README.md)
 - [Traffic-cost planning](traffic-cost-planning.md)
 - [Tokenomics overview](../business/tokenomics-overview.md)

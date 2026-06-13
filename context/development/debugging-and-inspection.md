@@ -53,6 +53,22 @@ reading ledger end first, visibility per party) are covered in
 [ledger-api-patterns.md](ledger-api-patterns.md). For decoding rejections and
 deciding what to retry, see [canton-error-handling.md](canton-error-handling.md).
 
+### Token holdings and allocations (CIP-56)
+
+Filter the ACS by **interface id** rather than a concrete Amulet template id:
+
+- **Holding** — `#splice-api-token-holding-v1:Splice.Api.Token.HoldingV1:Holding`
+- **Allocation** — `#splice-api-token-allocation-v1:Splice.Api.Token.AllocationV1:Allocation`
+
+Read `interfaceViews[0].viewValue`. On holdings, **`lock: null`** means
+spendable; a non-null **`lock`** (often with `expiresAt`) means the UTXO is
+locked by an allocation or registry rule. List active allocations to correlate
+with app `AllocationRequest` contracts.
+
+If a write fails with `Contract could not be found`, the client is likely using
+a **stale holding id** — re-run the ACS query before retrying. See
+[allocation lock learnings](cip-56-allocation-lock-learnings.md).
+
 ## Web debuggers (CantonTrace-style)
 
 Open-source web debuggers exist for Canton/DAML that give you a visual
@@ -91,6 +107,7 @@ When you need to understand *why* a submission did what it did:
 
 ## Related
 
+- [CIP-56 allocation lock learnings](cip-56-allocation-lock-learnings.md)
 - [Local dev stack (LocalNet)](local-dev-stack.md)
 - [Ledger API v2 client patterns](ledger-api-patterns.md)
 - [Canton error handling](canton-error-handling.md)

@@ -1,0 +1,76 @@
+-- | A minimal example of locking Amulet (Canton Coin) via the CIP-56 token
+-- standard: the owner requests an allocation from themselves to themselves.
+-- Funding the allocation locks the backing holdings; withdrawing it releases
+-- them. No funds ever leave the owner's control, and the lock is enforced
+-- on-ledger by the Amulet registry (not by this app).
+module AmuletLock where
+
+import DA.TextMap qualified as TextMap
+
+import Splice.Api.Token.MetadataV1
+import Splice.Api.Token.HoldingV1
+import Splice.Api.Token.AllocationV1
+import Splice.Api.Token.AllocationRequestV1
+
+-- | Identifier of the single transfer leg in every lock request.
+lockLegId : Text
+lockLegId = "lock"
+
+-- | A self-lock request. Implements `AllocationRequest` so that wallets (and
+-- the lock web UI) can fund it with an allocation, which locks the holdings.
+--
+-- The owner plays all three settlement roles (sender, receiver, executor), so
+-- a single party can create, fund, and release the lock.
+template AmuletLock
+  with
+    owner : Party
+      -- ^ Sender, receiver, and executor of the (never-settled) transfer leg.
+    amount : Decimal
+      -- ^ How much amulet to lock.
+    instrumentId : InstrumentId
+      -- ^ The amulet instrument (admin = DSO party, id = "Amulet").
+    lockId : Text
+      -- ^ Client-chosen identifier correlating the request with its allocation.
+    createdAt : Time
+      -- ^ When the lock was requested.
+    allocateBefore : Time
+      -- ^ Deadline for funding the lock (exclusive).
+    lockedUntil : Time
+      -- ^ The registry keeps the backing holdings locked until this time
+      --   (the settlement's `settleBefore`). Withdrawing the allocation
+      --   releases them earlier.
+  where
+    signatory owner
+
+    ensure amount > 0.0 && createdAt < allocateBefore && allocateBefore < lockedUntil
+
+    interface instance AllocationRequest for AmuletLock where
+      view = AllocationRequestView with
+        settlement = SettlementInfo with
+          executor = owner
+          settlementRef = Reference with id = lockId, cid = None
+          requestedAt = createdAt
+          allocateBefore
+          settleBefore = lockedUntil
+          meta = emptyMetadata
+        transferLegs = TextMap.fromList
+          [ ( lockLegId
+            , TransferLeg with
+                sender = owner
+                receiver = owner
+                amount
+                instrumentId
+                meta = emptyMetadata
+            )
+          ]
+        meta = emptyMetadata
+
+      -- Rejecting and withdrawing just archive the request; any allocation
+      -- already funded against it is released separately via
+      -- `Allocation_Withdraw` (handled by the registry).
+      allocationRequest_RejectImpl _self AllocationRequest_Reject{..} = do
+        assertMsg "Actor must be the owner" (actor == owner)
+        pure ChoiceExecutionMetadata with meta = emptyMetadata
+
+      allocationRequest_WithdrawImpl _self _arg =
+        pure ChoiceExecutionMetadata with meta = emptyMetadata

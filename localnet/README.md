@@ -146,6 +146,22 @@ AUTH_TOKEN="$AUTH_TOKEN" make deploy-dar DAR=.localnet/splice-node/dars/splice-t
 curl -s -H "Authorization: Bearer $AUTH_TOKEN" http://localhost:3975/v2/packages
 ```
 
+## Sample app — Amulet lock (CIP-56)
+
+After LocalNet is up, try the bundled lock/unlock example (DAML +
+registry factory/withdraw + JSON API writes + web UI). The example mints its own
+JWTs — you do not need `AUTH_TOKEN` for the UI path:
+
+```bash
+cd ../examples/amulet-lock
+make build && make deploy && make serve
+# http://localhost:8800 — Tap 100 CC, then Lock / Unlock
+```
+
+- [../examples/amulet-lock/README.md](../examples/amulet-lock/README.md) — full quickstart and troubleshooting
+- [../context/development/cip-56-allocation-lock-learnings.md](../context/development/cip-56-allocation-lock-learnings.md) — builder learnings
+- [../examples/README.md](../examples/README.md) — examples index
+
 ## Point an app at LocalNet
 
 A JSON-API app (for example a non-custodial wallet) typically needs:
@@ -176,6 +192,9 @@ endpoint (e.g. `localhost:2901`).
   https://github.com/digital-asset/decentralized-canton-sync/releases (archive
   name `${SPLICE_VERSION}_splice-node.tar.gz`). Pin `SPLICE_VERSION` to a published tag.
 - **401 / "security-sensitive error" on JSON API:** mint and pass `AUTH_TOKEN` (see above).
+- **404 `Contract could not be found` on submit:** stale holding/allocation contract
+  id — re-query the ACS before writes. See
+  [allocation lock learnings](../context/development/cip-56-allocation-lock-learnings.md#stale-holding-contract-ids-common-404).
 - **`make status` / `make logs` before fetch:** run `make fetch` or `make up` first.
 - **Layout changed upstream:** if a new Splice release relocates the compose
   files, adjust `LOCALNET_DIR` in the [Makefile](Makefile).

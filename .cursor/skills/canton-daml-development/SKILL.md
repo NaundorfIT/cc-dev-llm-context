@@ -63,6 +63,7 @@ an application with Canton/Splice APIs.
 - [External signing and interactive submission](../../../context/development/external-signing-and-interactive-submission.md)
 - [Canton error handling](../../../context/development/canton-error-handling.md)
 - [CIP-56 integration](../../../context/development/cip-56-integration.md)
+- [CIP-56 allocation lock learnings](../../../context/development/cip-56-allocation-lock-learnings.md)
 - [App rewards and markers](../../../context/development/app-rewards-and-markers.md)
 
 ## Official sources

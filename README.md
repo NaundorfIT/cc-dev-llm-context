@@ -3,8 +3,8 @@
 The ultimate starting point for getting productive on the **Canton Network** —
 whether you want to **build an app**, **run a validator**, or **understand the
 business and tokenomics**. It bundles curated knowledge, hands-on tooling (an MCP
-server, a local network, and a DevNet validator wrapper), and on-demand skills
-for AI agents.
+server, a local network, a **sample CIP-56 app**, and a DevNet validator
+wrapper), and on-demand skills for AI agents.
 
 See [AGENTS.md](AGENTS.md) for contributor guidance, sourcing, and editorial
 standards.
@@ -48,13 +48,16 @@ Three goal-based tracks. Each step links to a file under [`context/`](context/).
    `cn-quickstart`, and how the pieces fit.
 2. [Local dev stack](context/development/local-dev-stack.md) — spin up a full
    local network with [`localnet/`](localnet/) and deploy your DAR.
-3. [DAML & API entry points](context/development/daml-and-api-index.md) →
+3. [**Amulet lock example**](examples/amulet-lock/) — runnable CIP-56 app on
+   LocalNet (lock/unlock CC via allocations + web UI); then read
+   [allocation lock learnings](context/development/cip-56-allocation-lock-learnings.md).
+4. [DAML & API entry points](context/development/daml-and-api-index.md) →
    [Ledger API v2 patterns](context/development/ledger-api-patterns.md) — connect,
    query the ACS, submit.
-4. [CIP-56 token integration](context/development/cip-56-integration.md) and
+5. [CIP-56 token integration](context/development/cip-56-integration.md) and
    [external signing](context/development/external-signing-and-interactive-submission.md)
    for wallets and asset flows.
-5. [App rewards & markers](context/development/app-rewards-and-markers.md) and
+6. [App rewards & markers](context/development/app-rewards-and-markers.md) and
    [traffic-cost planning](context/development/traffic-cost-planning.md) before
    you go live; [debugging & inspection](context/development/debugging-and-inspection.md)
    when things misbehave.
@@ -120,6 +123,35 @@ AUTH_TOKEN=... make deploy-dar DAR=path/to/your.dar
 See [localnet/README.md](localnet/README.md) and
 [local-dev-stack.md](context/development/local-dev-stack.md).
 
+### Example app — lock and unlock Amulet (CIP-56)
+
+[`examples/amulet-lock/`](examples/amulet-lock/) is a **runnable end-to-end
+sample** on LocalNet: one DAML template implementing the token-standard
+`AllocationRequest` interface, plus a single-page web UI (no npm build). Locking
+is a self-allocation (sender = receiver = executor = you) — the Amulet registry
+enforces the lock on-ledger; the app never takes custody.
+
+**What you get:** DAML + registry factory/withdraw flow + JSON API writes with
+disclosed contracts + validator `tap` faucet — the same patterns a real
+CIP-56 wallet integration uses.
+
+```bash
+# Prerequisites: Docker Desktop running (≥ 8 GB), dpm, Python 3
+cd localnet && cp .env.example .env && make up
+
+cd ../examples/amulet-lock
+make build && make deploy && make serve   # UI at http://localhost:8800
+```
+
+In the UI: **Tap 100 CC** → enter amount and duration → **Lock** → **Unlock**.
+Teardown: stop the UI server, then `cd localnet && make down`.
+
+| Resource | Link |
+|----------|------|
+| Example README (quickstart, layout, limits) | [examples/amulet-lock/README.md](examples/amulet-lock/README.md) |
+| Builder learnings (registry APIs, stale UTXOs, auth) | [cip-56-allocation-lock-learnings.md](context/development/cip-56-allocation-lock-learnings.md) |
+| All examples | [examples/README.md](examples/README.md) |
+
 ### DevNet validator — a real network-connected node
 
 [`validator/`](validator/) wraps the official Splice validator Docker Compose to
@@ -165,6 +197,9 @@ See [validator/README.md](validator/README.md) and the
 | External signing and interactive submission (non-custodial) | [context/development/external-signing-and-interactive-submission.md](context/development/external-signing-and-interactive-submission.md) |
 | Canton error handling (categories, retry strategy) | [context/development/canton-error-handling.md](context/development/canton-error-handling.md) |
 | CIP-56 token integration | [context/development/cip-56-integration.md](context/development/cip-56-integration.md) |
+| CIP-56 allocation lock (example app learnings) | [context/development/cip-56-allocation-lock-learnings.md](context/development/cip-56-allocation-lock-learnings.md) |
+| Amulet lock sample app (runnable) | [examples/amulet-lock/README.md](examples/amulet-lock/README.md) |
+| Examples index | [examples/README.md](examples/README.md) |
 | App rewards, featured status, marker fair-use | [context/development/app-rewards-and-markers.md](context/development/app-rewards-and-markers.md) |
 | Traffic-cost planning (batching, locking, markers) | [context/development/traffic-cost-planning.md](context/development/traffic-cost-planning.md) |
 | Development Fund and Splice OSS contribution | [context/development/contributing-to-canton.md](context/development/contributing-to-canton.md) |

@@ -198,6 +198,29 @@ caller hands you specific input UTXOs, reject the request up front if any of the
 are locked, with a clear "all holdings locked" message when nothing is
 spendable.
 
+On the JSON Ledger API, locked state appears on the **`Holding`** interface view
+as a non-null **`lock`** field (with `expiresAt` when time-bounded). Unlocked
+holdings have `lock: null`. Re-read the ACS before every write — funding an
+allocation archives input holdings and mints new contract ids; cached ids cause
+`Contract could not be found` (HTTP 404) on submit.
+
+## Locking via allocation (self-transfer leg)
+
+To lock holdings **without custody** — funds stay yours but are not spendable —
+use a CIP-56 **allocation** funded through the registry:
+
+1. App DAML implements **`AllocationRequest`** with one transfer leg where
+   **sender = receiver = executor** (the owner).
+2. Owner calls the registry **`allocation-factory`** endpoint, then exercises
+   **`AllocationFactory_Allocate`** with unlocked holding ids.
+3. Registry creates an **`Allocation`** backed by locked holdings.
+4. **Unlock** with **`Allocation_Withdraw`** (and archive the app request with
+   **`AllocationRequest_Withdraw`**). Do not call `Allocation_ExecuteTransfer`.
+
+This is the same machinery as DvP settlement; the leg is simply never settled.
+Runnable reference: [`examples/amulet-lock/`](../../examples/amulet-lock/) and
+[allocation lock learnings](cip-56-allocation-lock-learnings.md).
+
 ## Reward-eligibility expectations for issuers
 
 If you issue an asset and want it to be reward-eligible as a featured app, expect
@@ -207,6 +230,9 @@ issuer party. See [app-rewards-and-markers.md](app-rewards-and-markers.md).
 
 ## Related
 
+- [CIP-56 allocation lock learnings](cip-56-allocation-lock-learnings.md)
+- [Amulet lock example](../../examples/amulet-lock/)
+- [Examples index](../../examples/README.md)
 - [Token Standard APIs (docs.sync.global)](https://docs.sync.global/app_dev/token_standard/index.html)
 - [DAML and API index](daml-and-api-index.md)
 - [Ledger API v2 client patterns](ledger-api-patterns.md)

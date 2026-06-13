@@ -19,6 +19,9 @@ node_modules/
 localnet/.localnet/
 localnet/.env
 
+# DAML build artifacts (example apps).
+.daml/
+
 # DevNet validator kickstart: downloaded upstream bundle and local env (secrets).
 validator/.splice-bundle/
 validator/.env

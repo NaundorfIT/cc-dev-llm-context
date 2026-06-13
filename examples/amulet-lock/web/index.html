@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Amulet Lock — LocalNet example</title>
+  <style>
+    :root {
+      --bg: #0e1117;
+      --card: #161b24;
+      --border: #262d3b;
+      --text: #e6e8ee;
+      --muted: #8b93a7;
+      --accent: #4f8cff;
+      --accent-hover: #6da0ff;
+      --green: #3fb68b;
+      --amber: #d9a13b;
+      --red: #e05d5d;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+    main { max-width: 760px; margin: 0 auto; display: grid; gap: 1rem; }
+    h1 { font-size: 1.35rem; font-weight: 650; }
+    h1 small { color: var(--muted); font-weight: 400; font-size: 0.85rem; margin-left: 0.5rem; }
+    h2 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 0.75rem; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; }
+    .row { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+    .balance { font-size: 2rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+    .balance small { font-size: 0.9rem; color: var(--muted); font-weight: 400; }
+    .pill { font-size: 0.75rem; padding: 0.15rem 0.6rem; border-radius: 999px; border: 1px solid var(--border); color: var(--muted); }
+    .pill.green { color: var(--green); border-color: var(--green); }
+    .pill.amber { color: var(--amber); border-color: var(--amber); }
+    input {
+      background: var(--bg); color: var(--text); border: 1px solid var(--border);
+      border-radius: 8px; padding: 0.55rem 0.75rem; font-size: 0.95rem; width: 9rem;
+    }
+    input:focus { outline: none; border-color: var(--accent); }
+    label { font-size: 0.8rem; color: var(--muted); display: grid; gap: 0.3rem; }
+    button {
+      background: var(--accent); color: #fff; border: none; border-radius: 8px;
+      padding: 0.6rem 1.1rem; font-size: 0.9rem; font-weight: 600; cursor: pointer;
+    }
+    button:hover { background: var(--accent-hover); }
+    button:disabled { opacity: 0.45; cursor: not-allowed; }
+    button.ghost { background: transparent; border: 1px solid var(--border); color: var(--text); }
+    button.ghost:hover { border-color: var(--accent); color: var(--accent); }
+    table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    th { text-align: left; color: var(--muted); font-weight: 500; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; padding: 0.4rem 0.5rem; }
+    td { padding: 0.55rem 0.5rem; border-top: 1px solid var(--border); font-variant-numeric: tabular-nums; }
+    .empty { color: var(--muted); font-size: 0.9rem; padding: 0.5rem; }
+    #status { font-size: 0.85rem; min-height: 1.2rem; }
+    #status.error { color: var(--red); }
+    #status.ok { color: var(--green); }
+    .party { font-size: 0.75rem; color: var(--muted); word-break: break-all; margin-top: 0.35rem; }
+    .spin { display: inline-block; animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Amulet Lock <small>CIP-56 allocation example on LocalNet</small></h1>
+
+    <div class="card">
+      <h2>Wallet</h2>
+      <div class="row" style="justify-content: space-between;">
+        <div>
+          <div class="balance"><span id="balance">–</span> <small>CC available</small></div>
+          <div class="balance" style="font-size:1.1rem; color: var(--amber);">
+            <span id="lockedBalance">–</span> <small>CC locked</small>
+          </div>
+          <div class="party" id="party">connecting…</div>
+        </div>
+        <div class="row">
+          <button class="ghost" id="tapBtn">Tap 100 CC</button>
+          <button class="ghost" id="refreshBtn">Refresh</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Lock tokens</h2>
+      <div class="row">
+        <label>Amount (CC)
+          <input id="lockAmount" type="number" min="0.000001" step="any" value="10" />
+        </label>
+        <label>Lock for (minutes)
+          <input id="lockMinutes" type="number" min="1" step="1" value="60" />
+        </label>
+        <button id="lockBtn" style="align-self: end;">Lock</button>
+      </div>
+      <p style="color: var(--muted); font-size: 0.8rem; margin-top: 0.75rem;">
+        Creates an <code>AllocationRequest</code> and funds it via the Amulet registry's
+        <code>AllocationFactory_Allocate</code>. The backing holdings stay yours but are
+        locked on-ledger until you unlock (or the lock expires).
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>Active locks</h2>
+      <div id="locks"></div>
+    </div>
+
+    <div class="card">
+      <h2>Holdings (UTXOs)</h2>
+      <div id="holdings"></div>
+    </div>
+
+    <div id="status"></div>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>

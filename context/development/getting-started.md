@@ -56,6 +56,21 @@ AUTH_TOKEN="$AUTH_TOKEN" make deploy-dar DAR=path/to/your.dar
 Without `dpm`, smoke-test deploy with a bundle-shipped DAR after `make up`:
 `DAR=.localnet/splice-node/dars/splice-token-test-trading-app-1.0.0.dar`.
 
+### 5b. Try the Amulet lock sample app (recommended)
+
+After LocalNet is up, run the bundled CIP-56 example — lock and unlock Canton
+Coin via allocations, with DAML + web UI:
+
+```bash
+cd examples/amulet-lock
+make build && make deploy && make serve
+# http://localhost:8800 — Tap 100 CC, then Lock / Unlock
+```
+
+- Example README: [../../examples/amulet-lock/README.md](../../examples/amulet-lock/README.md)
+- Builder learnings: [allocation lock learnings](cip-56-allocation-lock-learnings.md)
+- Examples index: [../../examples/README.md](../../examples/README.md)
+
 - LocalNet wrapper and endpoints: [../../localnet/README.md](../../localnet/README.md)
 - Full guide (topology, ports, auth, app wiring): [local-dev-stack.md](local-dev-stack.md)
 - Inspect/debug a local ledger: [debugging-and-inspection.md](debugging-and-inspection.md)
@@ -101,5 +116,8 @@ Fund and Splice contribution paths.
 - [Contributing to Canton](contributing-to-canton.md)
 - [DAML and API index](daml-and-api-index.md)
 - [CIP-56 integration](cip-56-integration.md)
+- [Examples index](../../examples/README.md)
+- [Amulet lock sample app](../../examples/amulet-lock/)
+- [CIP-56 allocation lock learnings](cip-56-allocation-lock-learnings.md)
 - [Traffic-cost planning](traffic-cost-planning.md)
 - [Validator onboarding](../infrastructure/validator-onboarding.md)

@@ -48,6 +48,29 @@ The reliable pattern is:
 `activeAtOffset` must be no greater than the ledger end and no less than the
 last pruning offset; offset `0` returns the empty set.
 
+### Interface-filtered ACS (token standard)
+
+For CIP-56 assets, query by **interface id** (for example
+`#splice-api-token-holding-v1:Splice.Api.Token.HoldingV1:Holding`) with
+`includeInterfaceView: true`, then read `interfaceViews[0].viewValue` for
+`amount`, `instrumentId`, and `lock`. Concrete template ids (such as
+`Splice.Amulet:Amulet`) change across package versions; interface filters stay
+stable. See [allocation lock learnings](cip-56-allocation-lock-learnings.md).
+
+### Stale contract ids after UTXO-consuming commands
+
+Holdings behave like UTXOs: allocate, transfer, and withdraw steps **archive**
+input contracts and create new ones. Clients that cache contract ids from an
+earlier ACS snapshot often see:
+
+```text
+HTTP 404: Contract could not be found with id ...
+```
+
+Refresh `ledger-end` + `active-contracts` **immediately before** building
+`inputHoldingCids` or exercising a choice on a holding. Do not reuse ids across
+UI sessions without re-querying.
+
 - ACS query and ledger end: https://docs.canton.network/sdks-tools/api-reference/json-api
 - v1 → v2 migration (ACS, query-by-attribute → PQS): https://docs.digitalasset.com/build/3.4/explanations/json-api/migration_v2.html
 - `GetActiveContractsRequest` (Java): https://docs.digitalasset.com/javadocs/3.4/com/daml/ledger/api/v2/StateServiceOuterClass.GetActiveContractsRequest.html
@@ -148,10 +171,37 @@ tend to break on upgrade. Two mitigations:
 
 Either way, branch on the reported Ledger API version from the bootstrap step.
 
+## Submit with disclosed contracts (registry-driven exercises)
+
+Token-standard factory and allocation choices often need **disclosed contracts**
+returned by the registry HTTP API (`choiceContext.disclosedContracts`). On the
+JSON Ledger API, pass them on the **command submission envelope**, not only inside
+choice arguments:
+
+```json
+{
+  "commands": [ { "ExerciseCommand": { ... } } ],
+  "disclosedContracts": [ { "templateId": "...", "contractId": "...", "createdEventBlob": "...", "synchronizerId": "..." } ]
+}
+```
+
+The registry's `choiceContextData` goes in `extraArgs.context` on the choice
+argument. This pattern is exercised end to end in
+[allocation lock learnings](cip-56-allocation-lock-learnings.md).
+
+## Package upload vs application commands (LocalNet)
+
+`POST /v2/packages` (DAR upload) requires **participant-admin** rights on
+LocalNet — mint the unsafe JWT with `sub: ledger-api-user`. Application commands
+and ACS reads for the wallet user use `sub: app-user` (or the relevant ledger
+user). Mixing these up surfaces as permission errors on upload, not on ordinary
+reads.
+
 ## Related
 
 - [DAML and API index](daml-and-api-index.md)
 - [External signing and interactive submission](external-signing-and-interactive-submission.md)
 - [Canton error handling](canton-error-handling.md)
 - [CIP-56 integration](cip-56-integration.md)
+- [CIP-56 allocation lock learnings](cip-56-allocation-lock-learnings.md)
 - [Traffic-cost planning](traffic-cost-planning.md)

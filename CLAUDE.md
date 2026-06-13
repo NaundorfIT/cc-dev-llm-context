@@ -42,6 +42,19 @@ DAML/apps locally — no sponsor/VPN. `cd localnet && cp .env.example .env && ma
 then `make deploy-dar DAR=...`. It wraps upstream images; nothing third-party is
 vendored.
 
+[examples/amulet-lock/](examples/amulet-lock/) is a runnable LocalNet sample app:
+one DAML template implementing `AllocationRequest`, plus a vanilla JS web UI that
+locks and unlocks Amulet via CIP-56 allocations (no custody). After `make up`:
+
+```bash
+cd examples/amulet-lock && make build && make deploy && make serve
+```
+
+UI at http://localhost:8800 (Tap CC → Lock → Unlock). See
+[examples/amulet-lock/README.md](examples/amulet-lock/README.md) and
+[allocation lock learnings](context/development/cip-56-allocation-lock-learnings.md).
+More examples: [examples/README.md](examples/README.md).
+
 [validator/](validator/) wraps the official Splice validator Docker Compose to
 stand up a real **DevNet** validator (`make prepare-secret && make up`). DevNet
 needs no approval form to onboard, but does need a static egress IP allowlisted by
@@ -62,6 +75,8 @@ a Super Validator sponsor. Full reference:
  [context/development/external-signing-and-interactive-submission.md](context/development/external-signing-and-interactive-submission.md)
 - Error handling (categories, retry):
  [context/development/canton-error-handling.md](context/development/canton-error-handling.md)
+- CIP-56 allocation lock (example app learnings):
+ [context/development/cip-56-allocation-lock-learnings.md](context/development/cip-56-allocation-lock-learnings.md)
 - Traffic costs (batching, locking, markers, wallet setup):
  [context/development/traffic-cost-planning.md](context/development/traffic-cost-planning.md)
 - CIP map: [context/reference/cip-index.md](context/reference/cip-index.md)

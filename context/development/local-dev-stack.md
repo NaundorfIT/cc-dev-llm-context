@@ -104,6 +104,19 @@ From [`localnet/`](../../localnet/README.md):
    JSON API calls).
 6. `make down` to stop, `make clean` to reset.
 
+For a full CIP-56 write-path walkthrough (allocation lock, registry factory,
+disclosed contracts, stale UTXOs), run the bundled sample app then read the
+learnings doc:
+
+```bash
+cd examples/amulet-lock
+make build && make deploy && make serve   # http://localhost:8800
+```
+
+- [examples/amulet-lock/README.md](../../examples/amulet-lock/README.md) — quickstart, layout, troubleshooting
+- [allocation lock learnings](cip-56-allocation-lock-learnings.md) — registry APIs, DAML setup, error cheat sheet
+- [examples/README.md](../../examples/README.md) — examples index
+
 ## Deploying a DAR
 
 Upload a built `.dar` to a participant via the JSON Ledger API v2:
@@ -117,6 +130,11 @@ curl -X POST "http://localhost:3975/v2/packages?vetAllPackages=true" \
 
 `vetAllPackages=true` vets the package on upload so it is immediately usable.
 Verify with `GET /v2/packages` (same bearer token).
+
+On LocalNet, **package upload** typically needs a JWT for **`ledger-api-user`**
+(participant admin), while application commands use the wallet ledger user (for
+example `app-user`). The [amulet-lock example](../../examples/amulet-lock/Makefile)
+`make deploy` target follows this split.
 
 Package management how-to: https://docs.canton.network/appdev/modules/m5-manage-daml-packages
 
@@ -149,6 +167,9 @@ wrapper here is intentionally leaner: it brings up the network so you can test
 
 ## Related
 
+- [CIP-56 allocation lock learnings](cip-56-allocation-lock-learnings.md)
+- [Amulet lock sample app](../../examples/amulet-lock/)
+- [Examples index](../../examples/README.md)
 - [LocalNet wrapper](../../localnet/README.md)
 - [Getting started build path](getting-started.md)
 - [Debugging and inspection](debugging-and-inspection.md)

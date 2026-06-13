@@ -41,6 +41,8 @@ or asset integrations.
 ## Read for depth
 
 - [CIP-56 integration](../../../context/development/cip-56-integration.md)
+- [CIP-56 allocation lock learnings](../../../context/development/cip-56-allocation-lock-learnings.md)
+- [Amulet lock example](../../../examples/amulet-lock/)
 - [Substantive CIPs — 0112 v2, 0107, 0103](../../../context/reference/substantive-cips.md)
 - [Traffic-cost planning](../../../context/development/traffic-cost-planning.md)
 - [App rewards and markers](../../../context/development/app-rewards-and-markers.md)
@@ -51,4 +53,5 @@ or asset integrations.
 - [Token Standard APIs (CIP-0056)](https://docs.sync.global/app_dev/token_standard/index.html)
 - [DA Registry / Token Standard guide](https://docs.digitalasset.com/utilities/mainnet/overview/registry-user-guide/token-standard.html)
 - [docs.digitalasset.com](https://docs.digitalasset.com)
-- [hyperledger-labs/splice](https://github.com/hyperledger-labs/splice)
+- [digital-asset/decentralized-canton-sync](https://github.com/digital-asset/decentralized-canton-sync) (release bundles)
+- [canton-network/splice](https://github.com/canton-network/splice) (OSS source)
