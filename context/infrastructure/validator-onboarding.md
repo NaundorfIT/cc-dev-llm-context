@@ -63,9 +63,16 @@ list, and approval notifications go to the email you provide.
 The documented operator flow involves:
 
 - Providing your sponsoring Super Validator with a static egress IP (one distinct
-  IP per network) and waiting for the IP allowlist to propagate.
+  IP per network) and waiting for the IP allowlist to propagate. Adoption happens
+  per Super Validator and needs a supermajority, so expect days rather than
+  minutes, and expect to observe partial progress. Run the checks from the node
+  itself: you are testing its egress address, not your laptop's. A 403 on Scan
+  discovery means that operator has not adopted your address yet, and a 403 from
+  the first Scan contacted can abort discovery before it reaches the others, so
+  probe each Scan individually rather than trusting one aggregate call.
 - Obtaining a one-time onboarding secret: self-serve on DevNet (short validity);
   issued manually by your sponsor on TestNet/MainNet (longer one-time validity).
+  This gate can start passing before every Scan responds, so check it separately.
 - For TestNet/MainNet, submitting a request to the Tokenomics Committee:
   [sync.global/validator-request](https://sync.global/validator-request/).
 
@@ -99,10 +106,28 @@ Once approved, move on to standing up and operating the node:
   [traffic-operations.md](traffic-operations.md).
 - Configure automatic traffic top-ups and keep identity backups; review the
   backup, disaster-recovery, and security-hardening guides.
+- Settle the day-2 questions before you carry load: a stable egress address and
+  a private admin path
+  ([networking and access](validator-networking-and-access.md)), JVM and memory
+  limits that match the host ([resource sizing](validator-resource-sizing.md)),
+  real authentication ([auth and identity](validator-auth-and-identity.md)),
+  metrics and log rotation
+  ([monitoring and traffic](validator-monitoring-and-traffic.md)), and a
+  rehearsed upgrade and restore procedure
+  ([upgrades and recovery](validator-upgrades-and-recovery.md)).
+
+Two identity choices are made at onboarding and cannot be changed afterwards:
+`PARTY_HINT`, which becomes part of your validator operator party id, and
+`MIGRATION_ID`, which is frozen per network. Choose the party hint deliberately.
 
 ## Related
 
 - [Validator node setup reference](validator-node-setup.md)
+- [Validator networking and access](validator-networking-and-access.md)
+- [Validator resource sizing](validator-resource-sizing.md)
+- [Validator authentication and identity](validator-auth-and-identity.md)
+- [Validator monitoring and traffic](validator-monitoring-and-traffic.md)
+- [Validator upgrades and recovery](validator-upgrades-and-recovery.md)
 - [DevNet validator wrapper](../../validator/README.md)
 - [Ecosystem and roles](../business/ecosystem-and-roles.md)
 - [Traffic operations](traffic-operations.md)

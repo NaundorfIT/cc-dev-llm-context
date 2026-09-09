@@ -9,6 +9,32 @@ shapes change across the 3.x line, so confirm against the version you target.
 > `synchronizer`, `application_id` became `user_id`) and removed JSON Ledger API
 > v1. Target v2 and do not mix 2.x and 3.x names.
 
+## Check for an authoritative value before deriving one
+
+Before you build a derived measurement, a polling loop, or a before/after diff,
+check whether an API already returns the value directly. The Ledger API, the JSON
+API, the Validator and Wallet APIs, the registry HTTP APIs, and each network's
+`/info` endpoint between them expose most of what integrations end up
+reconstructing by hand. A derived value is code you own forever, and it is
+usually less correct than the one the platform already computes.
+
+Worked example. To attribute the traffic cost of a submission, the obvious
+approach is to read a traffic gauge before and after. That gauge is per
+participant, so anything else transacting on the same node during the window is
+folded into the result, and the error is invisible: the number looks plausible,
+it is just wrong. The Ledger API returns the exact figure instead, as
+`paidTrafficCost` on the `submit-and-wait-for-transaction` response, scoped to
+that one submission.
+
+The same reflex applies to configuration. Network parameters such as the current
+Splice version and migration id are published on the network's `/info` endpoint,
+and traffic pricing parameters are readable from Scan. Read them rather than
+pinning a guess and discovering the drift later.
+
+- gRPC services: https://docs.canton.network/sdks-tools/api-reference/ledger-api-services
+- JSON API: https://docs.canton.network/reference/json-api-reference
+- Validator API: https://docs.canton.network/sdks-tools/api-reference/splice-validator-api
+
 ## Connection bootstrap sequence
 
 Before any feature is usable, establish a known-good baseline against the
@@ -205,3 +231,4 @@ reads.
 - [CIP-56 integration](cip-56-integration.md)
 - [CIP-56 allocation lock learnings](cip-56-allocation-lock-learnings.md)
 - [Traffic-cost planning](traffic-cost-planning.md)
+- [Validator authentication and identity](../infrastructure/validator-auth-and-identity.md)

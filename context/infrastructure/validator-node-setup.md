@@ -12,6 +12,14 @@ releases, and the doc sites are consolidating into
 > testing you do not need this — use the self-contained
 > [local dev stack (LocalNet)](../development/local-dev-stack.md) instead.
 
+This page is about standing a node up. The day-2 concerns have their own pages:
+[networking and access](validator-networking-and-access.md) (egress IP, admin
+plane, reaching the wallet UI), [resource sizing](validator-resource-sizing.md)
+(JVM parallelism and heap limits),
+[authentication and identity](validator-auth-and-identity.md),
+[monitoring and traffic](validator-monitoring-and-traffic.md), and
+[upgrades and recovery](validator-upgrades-and-recovery.md).
+
 ## Choosing a deployment model
 
 Splice supports two deployment methods:
@@ -47,6 +55,12 @@ Components are sensitive to database latency; co-locate a managed DB (CloudSQL/R
 in the same region/zone as the cluster. No specific latency SLA or mandated
 PostgreSQL version is published.
 
+On a small host these numbers are necessary but not sufficient: the Compose
+bundle's default JVM parallelism assumes a larger machine, and the heap ceiling
+follows the container memory limit rather than host RAM. See
+[validator-resource-sizing.md](validator-resource-sizing.md) before sizing a
+4-vCPU box.
+
 - Hardware: https://docs.sync.global/validator_operator/validator_hardware_requirements.html
 
 ## Software dependencies
@@ -70,7 +84,9 @@ The hard prerequisites are nearly identical across DevNet and TestNet:
   from the IP used for any other network. Dynamic/NAT'd IPs do not work unless
   tunneled through an SV-operated VPN (DevNet/laptop only).
 - **SV sponsor** adds your egress IP to the SV allowlist. Propagation typically
-  takes a few days ("usually 2-7 days").
+  takes a few days ("usually 2-7 days"). Adoption is per Super Validator and
+  needs a supermajority, so the state you observe is a fraction rather than a
+  yes/no.
 - **One-time onboarding secret** (see DevNet vs TestNet below).
 - **OIDC provider** and **PostgreSQL** as above.
 - **Network parameters:** `MIGRATION_ID` (frozen per network; published on the
@@ -78,7 +94,18 @@ The hard prerequisites are nearly identical across DevNet and TestNet:
   `sv.` — not the Scan URL), and a trusted **Scan URL** (starts with `scan.`).
 
 Validate allowlisting by querying the SV Scan version endpoints **from the same
-egress IP** you will deploy from.
+egress IP** you will deploy from. A laptop has a different egress address, so a
+check run from a workstation tells you nothing about the node.
+
+Read the results carefully. HTTP 403 means that particular Super Validator has
+not adopted your address yet; a timeout means that operator is unreachable or
+still pending. Because a 403 from the first Scan contacted can abort discovery
+before it enumerates the rest, partial propagation can look like total failure.
+Probe each Scan URL individually and count successes rather than trusting a
+single aggregate discovery call. The onboarding-secret endpoint can also start
+working before every Scan responds, so the two gates are worth checking
+separately. Details in
+[validator-networking-and-access.md](validator-networking-and-access.md).
 
 - Onboarding: https://docs.sync.global/validator_operator/validator_onboarding.html
 - Networking (ingress/egress): https://docs.sync.global/validator_operator/validator_networking.html
@@ -131,6 +158,9 @@ From the release bundle, `cd splice-node/docker-compose/validator`, set
 - Uses `.localhost` subdomains (e.g. `wallet.localhost`); use Firefox/Chrome if
   `.localhost` resolution fails. Metrics are on by default at
   `http://validator.localhost/metrics` and `http://participant.localhost/metrics`.
+  These bind to loopback on the host, so reaching them from a workstation needs
+  an SSH tunnel per virtual host; see
+  [validator-networking-and-access.md](validator-networking-and-access.md).
 - HTTP proxy via `JAVA_TOOL_OPTIONS` on the `validator` and `participant` services.
 
 This repo ships a thin wrapper that drives this flow (self-generate the secret,
@@ -225,6 +255,13 @@ See [traffic-operations.md](traffic-operations.md) and
 https://docs.sync.global/deployment/traffic.html. Read live `AmuletRules`
 parameters from Scan rather than hardcoding them.
 
+For a first deployment, set `targetThroughput` to `0`. Base-rate traffic is
+enough to finish onboarding and open the wallet, and auto top-up otherwise tries
+to spend CC the wallet does not have yet. Turn it on later, once funded. Which
+gauges to watch, and why the free and purchased pools must be read separately,
+is covered in
+[validator-monitoring-and-traffic.md](validator-monitoring-and-traffic.md).
+
 ## Upgrades
 
 - **Regular upgrades:** `helm upgrade` the participant and validator charts in
@@ -240,6 +277,13 @@ parameters from Scan rather than hardcoding them.
 - Upgrades: https://docs.sync.global/validator_operator/validator_upgrades.html
 - Major upgrades: https://docs.sync.global/validator_operator/validator_major_upgrades.html
 
+On Docker Compose the equivalent of `helm upgrade` is replacing the **whole**
+bundle, not bumping `IMAGE_TAG`, because older Compose files are not guaranteed
+to work with newer images. The guarded sequence, the backup ordering, the
+readiness gates, and the procedure for moving an onboarded node to a new machine
+are in
+[validator-upgrades-and-recovery.md](validator-upgrades-and-recovery.md).
+
 ## Monitoring
 
 - Apps expose Prometheus metrics on **port 10013** at `/metrics`.
@@ -247,10 +291,16 @@ parameters from Scan rather than hardcoding them.
   Docker Compose: metrics on by default.
 - Native histograms need Prometheus `--enable-feature=native-histograms`.
 - **Grafana dashboards** ship in the release bundle under `grafana-dashboards`
-  (built for k8s; adapt for Compose).
+  (built for k8s; adapt for Compose). They are part of the bundle, so an upgrade
+  replaces them: keep dashboards you author outside that directory.
+- Configure Docker log rotation **before** creating the first container. The
+  default `json-file` driver is unbounded and the participant is verbose.
 
 - Observability: https://docs.sync.global/deployment/observability/index.html
 - Metrics reference: https://docs.sync.global/deployment/observability/metrics_reference.html
+
+See [validator-monitoring-and-traffic.md](validator-monitoring-and-traffic.md)
+for scrape targets, traffic gauges, bind addresses, and log rotation.
 
 ## Canton 3.4 / Splice 0.6.x breaking changes for new deployments
 
@@ -302,6 +352,11 @@ parameters from Scan rather than hardcoding them.
 ## Related
 
 - [Validator onboarding (apply process)](validator-onboarding.md)
+- [Validator networking and access](validator-networking-and-access.md)
+- [Validator resource sizing](validator-resource-sizing.md)
+- [Validator authentication and identity](validator-auth-and-identity.md)
+- [Validator monitoring and traffic](validator-monitoring-and-traffic.md)
+- [Validator upgrades and recovery](validator-upgrades-and-recovery.md)
 - [Validator DevNet wrapper](../../validator/README.md)
 - [Splice validator ops (link index)](splice-validator-ops.md)
 - [Traffic operations](traffic-operations.md)

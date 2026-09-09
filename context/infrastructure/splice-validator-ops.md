@@ -68,7 +68,19 @@ verify authoritative figures against the Scan APIs.
    [hyperledger-labs/splice](https://github.com/hyperledger-labs/splice).
 3. Build a traffic model from [traffic-operations.md](traffic-operations.md) and
    the official traffic documentation.
-4. Establish monitoring and runbooks before carrying production load.
+4. Get the host right before it carries load:
+   [networking and access](validator-networking-and-access.md) for a stable
+   egress address and a private admin path, and
+   [resource sizing](validator-resource-sizing.md) for JVM parallelism and heap
+   limits. Both have defaults that fail quietly on a small machine.
+5. Configure real authentication
+   ([auth and identity](validator-auth-and-identity.md)). On MainNet this has to
+   exist before the validator first starts, not after.
+6. Stand up
+   [monitoring, traffic gauges, and log rotation](validator-monitoring-and-traffic.md).
+7. Rehearse
+   [upgrades and recovery](validator-upgrades-and-recovery.md) on a lower tier
+   before you need either in production.
 
 ## Contributing to Splice
 

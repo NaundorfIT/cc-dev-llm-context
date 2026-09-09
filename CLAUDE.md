@@ -19,6 +19,7 @@ editorial standards.
 | `/canton-cip56-integrations` | Token standard: holdings, transfers, pre-approval, DvP, traffic cost |
 | `/canton-featured-app-compliance` | Featured-app rewards, markers until CIP-0104, beneficiary splits |
 | `/canton-validator-infrastructure` | Validator apply/onboard, Splice deploy, traffic metering |
+| `/canton-validator-operations` | Day-2: JVM/memory sizing, egress IP, OIDC, metrics, upgrades, backup/restore, host migration |
 | `/canton-ecosystem-contribution` | Development Fund proposals, Splice OSS contribution |
 
 Cursor users load the same skill bodies from [.cursor/skills/](.cursor/skills/).
@@ -61,6 +62,11 @@ needs no approval form to onboard, but does need a static egress IP allowlisted 
 a Super Validator sponsor. Full reference:
 [context/infrastructure/validator-node-setup.md](context/infrastructure/validator-node-setup.md).
 
+Once a node exists and has to keep working, the day-2 pages under
+`context/infrastructure/` cover the parts whose defaults fail quietly: egress and
+admin networking, JVM/memory sizing, OIDC auth, metrics and traffic gauges, and
+the guarded upgrade/restore procedure. Use `/canton-validator-operations`.
+
 ## High-signal context files
 
 - Build path: [context/development/getting-started.md](context/development/getting-started.md)
@@ -79,6 +85,16 @@ a Super Validator sponsor. Full reference:
  [context/development/cip-56-allocation-lock-learnings.md](context/development/cip-56-allocation-lock-learnings.md)
 - Traffic costs (batching, locking, markers, wallet setup):
  [context/development/traffic-cost-planning.md](context/development/traffic-cost-planning.md)
+- Validator networking and access (egress IP, admin plane, SSH tunnels):
+ [context/infrastructure/validator-networking-and-access.md](context/infrastructure/validator-networking-and-access.md)
+- Validator resource sizing (ActiveProcessorCount, container heap ceiling):
+ [context/infrastructure/validator-resource-sizing.md](context/infrastructure/validator-resource-sizing.md)
+- Validator auth and identity (OIDC, JWT audiences, immutable fields):
+ [context/infrastructure/validator-auth-and-identity.md](context/infrastructure/validator-auth-and-identity.md)
+- Validator monitoring and traffic (gauges, bind addresses, log rotation):
+ [context/infrastructure/validator-monitoring-and-traffic.md](context/infrastructure/validator-monitoring-and-traffic.md)
+- Validator upgrades and recovery (guarded sequence, backup/restore, migration):
+ [context/infrastructure/validator-upgrades-and-recovery.md](context/infrastructure/validator-upgrades-and-recovery.md)
 - CIP map: [context/reference/cip-index.md](context/reference/cip-index.md)
 - Builder-impact CIPs: [context/reference/substantive-cips.md](context/reference/substantive-cips.md)
 

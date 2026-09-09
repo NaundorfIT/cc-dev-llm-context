@@ -73,7 +73,15 @@ Three goal-based tracks. Each step links to a file under [`context/`](context/).
    real DevNet node with the [`validator/`](validator/) wrapper.
 4. [Traffic operations](context/infrastructure/traffic-operations.md) — metering,
    purchase, and automatic top-up.
-5. [Splice validator ops](context/infrastructure/splice-validator-ops.md) — the
+5. Day-2 operations, where the defaults are wrong more often than not:
+   [networking and access](context/infrastructure/validator-networking-and-access.md)
+   (a stable egress IP, a private admin plane, reaching the wallet UI),
+   [resource sizing](context/infrastructure/validator-resource-sizing.md)
+   (JVM parallelism and the container heap ceiling),
+   [auth and identity](context/infrastructure/validator-auth-and-identity.md),
+   [monitoring and traffic](context/infrastructure/validator-monitoring-and-traffic.md),
+   and [upgrades and recovery](context/infrastructure/validator-upgrades-and-recovery.md).
+6. [Splice validator ops](context/infrastructure/splice-validator-ops.md) — the
    operator documentation index for ongoing operations.
 
 ### Understand the business
@@ -210,6 +218,11 @@ See [validator/README.md](validator/README.md) and the
 |-------|------|
 | Validator onboarding and application process | [context/infrastructure/validator-onboarding.md](context/infrastructure/validator-onboarding.md) |
 | Validator node setup reference (DevNet/TestNet, Helm + Compose) | [context/infrastructure/validator-node-setup.md](context/infrastructure/validator-node-setup.md) |
+| Networking and access (egress IP, admin plane, SSH tunnels, allowlisting) | [context/infrastructure/validator-networking-and-access.md](context/infrastructure/validator-networking-and-access.md) |
+| Resource sizing (ActiveProcessorCount, container heap, sizing profiles) | [context/infrastructure/validator-resource-sizing.md](context/infrastructure/validator-resource-sizing.md) |
+| Authentication and identity (OIDC, JWT audiences, immutable fields) | [context/infrastructure/validator-auth-and-identity.md](context/infrastructure/validator-auth-and-identity.md) |
+| Monitoring and traffic (scrape targets, traffic gauges, log rotation) | [context/infrastructure/validator-monitoring-and-traffic.md](context/infrastructure/validator-monitoring-and-traffic.md) |
+| Upgrades and recovery (guarded upgrade, backup/restore, host migration) | [context/infrastructure/validator-upgrades-and-recovery.md](context/infrastructure/validator-upgrades-and-recovery.md) |
 | Traffic metering, purchase, and top-up | [context/infrastructure/traffic-operations.md](context/infrastructure/traffic-operations.md) |
 | Splice deployment and operator doc index | [context/infrastructure/splice-validator-ops.md](context/infrastructure/splice-validator-ops.md) |
 

@@ -17,6 +17,9 @@ self-contained.
   - `canton-featured-app-compliance` — featured-app rewards and activity markers.
   - `canton-validator-infrastructure` — validator apply/onboard, Splice deploy,
     traffic metering.
+  - `canton-validator-operations` — day-2 operations: JVM/memory sizing, egress
+    IP, OIDC, metrics and traffic gauges, upgrades, backup/restore, host
+    migration.
   - `canton-ecosystem-contribution` — Development Fund proposals and Splice OSS.
 - **Deep-dive docs** live under `context/` — see [README.md](README.md) for the
   full index.
