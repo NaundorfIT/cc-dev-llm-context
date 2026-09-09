@@ -154,7 +154,8 @@ records.
 
 Finish with a smoke test: a small number of end-to-end transfers, run once, that
 prove the ledger accepts commands and the synchronizer sequences them. This is a
-one-shot check, not a scheduled job. Prefer base-rate traffic; see
+one-shot check, not a scheduled job. Confirm the node has traffic available
+before you run it; see
 [validator-monitoring-and-traffic.md](validator-monitoring-and-traffic.md).
 
 If you depend on third-party token-standard instruments from a registry, snapshot

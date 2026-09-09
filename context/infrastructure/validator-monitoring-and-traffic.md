@@ -54,10 +54,8 @@ Base-rate traffic and purchased traffic are distinct balances, and this is the
 single most misread part of the traffic model.
 
 Purchasing traffic does **not** refill the base-rate gauge. It adds to the extra
-pool. If you have automation that waits for available traffic before submitting
-work, gate it on `base_traffic_remainder` specifically, not on a combined total.
-Gating on a total means a healthy purchased balance masks an exhausted free
-allowance, and the automation runs when you intended it to wait.
+pool. Read the two gauges separately when you assess capacity, because a
+combined total hides which pool is being drawn down.
 
 Two related points:
 
@@ -72,14 +70,10 @@ Two related points:
 `TARGET_TRAFFIC_THROUGHPUT` drives the built-in top-up automation. Set it to `0`
 for a first deployment.
 
-The reasoning is ordering. Base-rate traffic regenerates on its own and is enough
-to finish onboarding and open the wallet, whereas auto top-up wants to burn CC the
-wallet does not have yet. Turn it on later, once the wallet is funded and you
-actually want purchased traffic backing sustained activity.
-
-The same preference applies during maintenance. A post-upgrade smoke test should
-run on base-rate traffic; if the remainder is too low, wait for the next refill
-rather than making an unplanned purchase.
+The reasoning is ordering. Auto top-up tries to spend CC that a freshly onboarded
+wallet does not have yet, so it fails repeatedly and adds noise while you are
+still establishing whether the node is healthy. Turn it on once the wallet is
+funded, and size it from your expected throughput.
 
 ## Configure log rotation before the first container
 

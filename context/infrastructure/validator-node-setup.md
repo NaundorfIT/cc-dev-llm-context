@@ -255,11 +255,10 @@ See [traffic-operations.md](traffic-operations.md) and
 https://docs.sync.global/deployment/traffic.html. Read live `AmuletRules`
 parameters from Scan rather than hardcoding them.
 
-For a first deployment, set `targetThroughput` to `0`. Base-rate traffic is
-enough to finish onboarding and open the wallet, and auto top-up otherwise tries
-to spend CC the wallet does not have yet. Turn it on later, once funded. Which
-gauges to watch, and why the free and purchased pools must be read separately,
-is covered in
+For a first deployment, set `targetThroughput` to `0`, because auto top-up
+otherwise tries to spend CC the wallet does not have yet and fails repeatedly.
+Turn it on once the wallet is funded. Which gauges to watch, and why the
+base-rate and purchased pools must be read separately, is covered in
 [validator-monitoring-and-traffic.md](validator-monitoring-and-traffic.md).
 
 ## Upgrades

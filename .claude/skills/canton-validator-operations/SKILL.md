@@ -55,8 +55,8 @@ whether to operate a node, applying, and the initial deployment, use
   destination, and do not rely on one older than the sequencer pruning window.
 - Do not run allowlist checks from a workstation; run them from the node, whose
   egress address is the one being tested.
-- Do not gate work on a combined traffic total. Base-rate and purchased traffic
-  are separate pools, and buying does not refill the base-rate gauge.
+- Do not read a combined traffic total. Base-rate and purchased traffic are
+  separate pools, and buying does not refill the base-rate gauge.
 - Do not create the first container before Docker log rotation is configured.
 
 ## Read for depth

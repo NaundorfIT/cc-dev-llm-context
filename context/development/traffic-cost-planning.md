@@ -148,7 +148,7 @@ Where `soft_heartbeat_count = (24 / soft_interval_hours) × period_days` and
 `normal_heartbeat_count = (24 / normal_interval_hours) × period_days`.
 
 At scale, **recurring heartbeat traffic often dominates** one-time lock creation.
-Model monthly cost per active lock before relying on passive free-traffic refill.
+Model monthly cost per active lock and budget purchased traffic accordingly.
 
 ### CIP-56 allocation / holding lock
 
