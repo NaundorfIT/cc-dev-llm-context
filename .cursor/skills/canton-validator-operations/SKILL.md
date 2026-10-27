@@ -14,6 +14,14 @@ Use this skill once a validator exists and has to keep working. For deciding
 whether to operate a node, applying, and the initial deployment, use
 `canton-validator-infrastructure` instead.
 
+When the task is one of these, switch to that skill and follow its checklist:
+
+| Task | Skill |
+|------|--------|
+| Splice version upgrade | `canton-validator-upgrade` |
+| Backup, restore, or host move | `canton-validator-backup` |
+| Security notice, keys, incident stop | `canton-validator-security` |
+
 ## Approach
 
 1. **Establish the invariants first.** Three of them govern almost every
@@ -49,6 +57,32 @@ whether to operate a node, applying, and the initial deployment, use
    compromise, stop submitters, stop the validator, keep the volumes, and email
    `security@canton.foundation`. Unhosting parties needs a second node that is
    already onboarded and not the one you suspect.
+
+## Day-2 check
+
+Run this when the question is whether the node is in a good operating state.
+Hand upgrade, backup, and incident work to the specialist skills above.
+
+```
+Operations progress:
+- [ ] /info sv version matches the running image tags, successor is null
+- [ ] MIGRATION_ID and PARTY_HINT unchanged since onboard
+- [ ] Egress address is the allowlisted one, checked from the node
+- [ ] ActiveProcessorCount and numThreads match each service's *_CPUS
+- [ ] Wallet, ledger, metrics, and the identity provider are on the admin path
+- [ ] Docker log rotation is configured
+- [ ] Latest backup is inside the pruning window and checksums verified off-server
+- [ ] Base-rate and purchased traffic read as separate gauges
+- [ ] docker compose ps shows whether wallet-gateway is actually running
+```
+
+```bash
+curl -fsSL https://docs.global.canton.network.sync.global/info | jq '{sv,synchronizer}'
+curl -fsSL https://docs.dev.global.canton.network.sync.global/info | jq '{sv,synchronizer}'
+docker compose ps
+```
+
+Query the `/info` URL for the network this node is on.
 
 ## Guardrails
 

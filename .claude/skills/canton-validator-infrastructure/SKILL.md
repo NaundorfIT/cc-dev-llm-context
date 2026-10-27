@@ -61,6 +61,7 @@ deploying with Splice, and managing traffic.
 - [Splice validator ops](../../../context/infrastructure/splice-validator-ops.md)
 - [Validator security](../../../context/infrastructure/validator-security.md)
 - [Validator API calls](../../../context/development/validator-api-calls.md)
+- Skills `canton-validator-upgrade`, `canton-validator-backup`, `canton-validator-security`
 
 ## Official sources
 

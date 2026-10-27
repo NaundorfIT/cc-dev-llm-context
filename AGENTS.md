@@ -18,8 +18,13 @@ self-contained.
   - `canton-validator-infrastructure` — validator apply/onboard, Splice deploy,
     traffic metering.
   - `canton-validator-operations` — day-2 operations: JVM/memory sizing, egress
-    IP, OIDC, metrics and traffic gauges, upgrades, backup/restore, host
-    migration, security, and the validator API calls apps get wrong.
+    IP, OIDC, metrics and traffic gauges, and which specialist skill to run.
+  - `canton-validator-upgrade` — guarded Splice version upgrade (`/info` gate,
+    release notes, backup, quiesce, full bundle swap, readiness).
+  - `canton-validator-backup` — identity and Postgres backups, off-server
+    checksums, restore onto the same Splice version.
+  - `canton-validator-security` — advertised version, Wallet Gateway, key
+    custody, incident stop.
   - `canton-ecosystem-contribution` — Development Fund proposals and Splice OSS.
 - **Deep-dive docs** live under `context/` — see [README.md](README.md) for the
   full index.

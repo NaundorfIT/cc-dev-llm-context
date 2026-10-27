@@ -19,7 +19,10 @@ editorial standards.
 | `/canton-cip56-integrations` | Token standard: holdings, transfers, pre-approval, DvP, traffic cost |
 | `/canton-featured-app-compliance` | Featured-app rewards, markers until CIP-0104, beneficiary splits |
 | `/canton-validator-infrastructure` | Validator apply/onboard, Splice deploy, traffic metering |
-| `/canton-validator-operations` | Day-2: JVM/memory sizing, egress IP, OIDC, metrics, upgrades, backup/restore, host migration, security, validator API calls |
+| `/canton-validator-operations` | Day-2: JVM/memory sizing, egress IP, OIDC, metrics, and which specialist skill to run |
+| `/canton-validator-upgrade` | Guarded Splice version upgrade: `/info` gate, release notes, backup, quiesce, bundle swap, readiness |
+| `/canton-validator-backup` | Identity and Postgres backups, off-server checksums, restore onto the same Splice version |
+| `/canton-validator-security` | Advertised version, Wallet Gateway, key custody, incident stop |
 | `/canton-ecosystem-contribution` | Development Fund proposals, Splice OSS contribution |
 
 Cursor users load the same skill bodies from [.cursor/skills/](.cursor/skills/).
@@ -65,7 +68,9 @@ a Super Validator sponsor. Full reference:
 Once a node exists and has to keep working, the day-2 pages under
 `context/infrastructure/` cover the parts whose defaults fail quietly: egress and
 admin networking, JVM/memory sizing, OIDC auth, metrics and traffic gauges, and
-the guarded upgrade/restore procedure. Use `/canton-validator-operations`.
+the guarded upgrade/restore procedure. Use `/canton-validator-operations` to
+choose the specialist skill: `/canton-validator-upgrade`,
+`/canton-validator-backup`, or `/canton-validator-security`.
 
 ## High-signal context files
 
