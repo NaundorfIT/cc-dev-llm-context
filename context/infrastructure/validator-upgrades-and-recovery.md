@@ -33,6 +33,11 @@ curl -fsSL https://docs.global.canton.network.sync.global/info | jq .
 ```
 
 Never guess `SPLICE_VERSION` or `MIGRATION_ID`. They are published; read them.
+A tag in the bundle repository is a different fact from the version `/info`
+advertises. On 2026-10-27 MainNet `/info` still reported `0.9.3` while tag
+`v0.9.4` was already published. Install the advertised version. The check, the
+Wallet Gateway image, and the incident steps are in
+[validator-security.md](validator-security.md).
 
 ## Invariants
 
@@ -244,6 +249,7 @@ worse than an outage, because it is harder to detect.
 
 ## Related
 
+- [Validator security](validator-security.md)
 - [Validator networking and access](validator-networking-and-access.md)
 - [Validator resource sizing](validator-resource-sizing.md)
 - [Validator authentication and identity](validator-auth-and-identity.md)

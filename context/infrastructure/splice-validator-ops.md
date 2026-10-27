@@ -80,7 +80,13 @@ verify authoritative figures against the Scan APIs.
    [monitoring, traffic gauges, and log rotation](validator-monitoring-and-traffic.md).
 7. Rehearse
    [upgrades and recovery](validator-upgrades-and-recovery.md) on a lower tier
-   before you need either in production.
+   before you need either in production. Read
+   [validator security](validator-security.md) before the first upgrade: the
+   version you install is the one `/info` advertises, and the incident path is
+   stop, keep the volumes, write to `security@canton.foundation`.
+8. Apps that call the node should read
+   [validator API calls](../development/validator-api-calls.md) for the Compose
+   host names, token subjects, and preapproval lag.
 
 ## Contributing to Splice
 

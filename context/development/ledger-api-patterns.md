@@ -231,4 +231,5 @@ reads.
 - [CIP-56 integration](cip-56-integration.md)
 - [CIP-56 allocation lock learnings](cip-56-allocation-lock-learnings.md)
 - [Traffic-cost planning](traffic-cost-planning.md)
+- [Validator API calls](validator-api-calls.md)
 - [Validator authentication and identity](../infrastructure/validator-auth-and-identity.md)

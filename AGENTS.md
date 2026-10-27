@@ -19,7 +19,7 @@ self-contained.
     traffic metering.
   - `canton-validator-operations` — day-2 operations: JVM/memory sizing, egress
     IP, OIDC, metrics and traffic gauges, upgrades, backup/restore, host
-    migration.
+    migration, security, and the validator API calls apps get wrong.
   - `canton-ecosystem-contribution` — Development Fund proposals and Splice OSS.
 - **Deep-dive docs** live under `context/` — see [README.md](README.md) for the
   full index.

@@ -19,7 +19,7 @@ editorial standards.
 | `/canton-cip56-integrations` | Token standard: holdings, transfers, pre-approval, DvP, traffic cost |
 | `/canton-featured-app-compliance` | Featured-app rewards, markers until CIP-0104, beneficiary splits |
 | `/canton-validator-infrastructure` | Validator apply/onboard, Splice deploy, traffic metering |
-| `/canton-validator-operations` | Day-2: JVM/memory sizing, egress IP, OIDC, metrics, upgrades, backup/restore, host migration |
+| `/canton-validator-operations` | Day-2: JVM/memory sizing, egress IP, OIDC, metrics, upgrades, backup/restore, host migration, security, validator API calls |
 | `/canton-ecosystem-contribution` | Development Fund proposals, Splice OSS contribution |
 
 Cursor users load the same skill bodies from [.cursor/skills/](.cursor/skills/).
@@ -95,6 +95,10 @@ the guarded upgrade/restore procedure. Use `/canton-validator-operations`.
  [context/infrastructure/validator-monitoring-and-traffic.md](context/infrastructure/validator-monitoring-and-traffic.md)
 - Validator upgrades and recovery (guarded sequence, backup/restore, migration):
  [context/infrastructure/validator-upgrades-and-recovery.md](context/infrastructure/validator-upgrades-and-recovery.md)
+- Validator security (advertised version, Wallet Gateway, keys, incident stop):
+ [context/infrastructure/validator-security.md](context/infrastructure/validator-security.md)
+- Validator API calls (hosts, tokens, preapproval, DAR upload):
+ [context/development/validator-api-calls.md](context/development/validator-api-calls.md)
 - CIP map: [context/reference/cip-index.md](context/reference/cip-index.md)
 - Builder-impact CIPs: [context/reference/substantive-cips.md](context/reference/substantive-cips.md)
 

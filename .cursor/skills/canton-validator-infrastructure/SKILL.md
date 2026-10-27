@@ -59,6 +59,8 @@ deploying with Splice, and managing traffic.
 - [Validator node setup reference](../../../context/infrastructure/validator-node-setup.md)
 - [Traffic operations](../../../context/infrastructure/traffic-operations.md)
 - [Splice validator ops](../../../context/infrastructure/splice-validator-ops.md)
+- [Validator security](../../../context/infrastructure/validator-security.md)
+- [Validator API calls](../../../context/development/validator-api-calls.md)
 
 ## Official sources
 

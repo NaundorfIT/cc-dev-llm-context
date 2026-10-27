@@ -4,7 +4,8 @@ description: >-
   Day-2 operations for an already-deployed Canton validator. Use when sizing JVM
   and memory limits, keeping a stable egress IP, configuring OIDC auth, setting
   up metrics and traffic gauges, upgrading Splice, backing up or restoring a
-  node, or moving one to a new machine.
+  node, moving one to a new machine, responding to a security notice, or
+  calling the wallet and ledger APIs from an app.
 ---
 
 # Canton validator operations
@@ -42,6 +43,12 @@ whether to operate a node, applying, and the initial deployment, use
    preserves the participant identity, needs no new onboarding secret, and skips
    the first-sync catch-up. Reuse the same egress address and move it only after
    the old node stops and before the new one starts.
+7. **Install the version `/info` advertises.** A newer tag in the bundle
+   repository is not a reason to upgrade. Wallet Gateway is a separate image
+   (`start.sh -g`); patch it only when that container is running. On a suspected
+   compromise, stop submitters, stop the validator, keep the volumes, and email
+   `security@canton.foundation`. Unhosting parties needs a second node that is
+   already onboarded and not the one you suspect.
 
 ## Guardrails
 
@@ -55,6 +62,12 @@ whether to operate a node, applying, and the initial deployment, use
   destination, and do not rely on one older than the sequencer pruning window.
 - Do not run allowlist checks from a workstation; run them from the node, whose
   egress address is the one being tested.
+- Do not install a Splice version `/info` does not advertise, including when a
+  newer GitHub tag already exists.
+- Do not unhost parties onto a node that has not been onboarded. A fresh
+  onboarding is a new identity.
+- Do not diff the participant traffic gauge to price one submission. Read
+  `paidTrafficCost` on that transaction.
 - Do not read a combined traffic total. Base-rate and purchased traffic are
   separate pools, and buying does not refill the base-rate gauge.
 - Do not create the first container before Docker log rotation is configured.
@@ -66,6 +79,8 @@ whether to operate a node, applying, and the initial deployment, use
 - [Validator authentication and identity](../../../context/infrastructure/validator-auth-and-identity.md)
 - [Validator monitoring and traffic](../../../context/infrastructure/validator-monitoring-and-traffic.md)
 - [Validator upgrades and recovery](../../../context/infrastructure/validator-upgrades-and-recovery.md)
+- [Validator security](../../../context/infrastructure/validator-security.md)
+- [Validator API calls](../../../context/development/validator-api-calls.md)
 - [Validator node setup reference](../../../context/infrastructure/validator-node-setup.md)
 - [Traffic operations](../../../context/infrastructure/traffic-operations.md)
 

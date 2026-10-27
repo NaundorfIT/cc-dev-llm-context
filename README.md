@@ -80,8 +80,13 @@ Three goal-based tracks. Each step links to a file under [`context/`](context/).
    (JVM parallelism and the container heap ceiling),
    [auth and identity](context/infrastructure/validator-auth-and-identity.md),
    [monitoring and traffic](context/infrastructure/validator-monitoring-and-traffic.md),
-   and [upgrades and recovery](context/infrastructure/validator-upgrades-and-recovery.md).
-6. [Splice validator ops](context/infrastructure/splice-validator-ops.md) — the
+   [upgrades and recovery](context/infrastructure/validator-upgrades-and-recovery.md),
+   and [security](context/infrastructure/validator-security.md) (version the
+   network advertises, Wallet Gateway, keys, incident stop).
+6. Apps calling a live node:
+   [validator API calls](context/development/validator-api-calls.md) (hosts,
+   token subjects, preapproval, DAR upload).
+7. [Splice validator ops](context/infrastructure/splice-validator-ops.md) — the
    operator documentation index for ongoing operations.
 
 ### Understand the business
@@ -202,6 +207,7 @@ See [validator/README.md](validator/README.md) and the
 | Debugging and inspection (Console, Daml Shell, PQS, web debuggers) | [context/development/debugging-and-inspection.md](context/development/debugging-and-inspection.md) |
 | DAML and Canton/Splice API entry points | [context/development/daml-and-api-index.md](context/development/daml-and-api-index.md) |
 | Ledger API v2 client patterns (bootstrap, ACS, reassignments) | [context/development/ledger-api-patterns.md](context/development/ledger-api-patterns.md) |
+| Validator API calls (hosts, tokens, preapproval, DAR upload) | [context/development/validator-api-calls.md](context/development/validator-api-calls.md) |
 | External signing and interactive submission (non-custodial) | [context/development/external-signing-and-interactive-submission.md](context/development/external-signing-and-interactive-submission.md) |
 | Canton error handling (categories, retry strategy) | [context/development/canton-error-handling.md](context/development/canton-error-handling.md) |
 | CIP-56 token integration | [context/development/cip-56-integration.md](context/development/cip-56-integration.md) |
@@ -223,6 +229,7 @@ See [validator/README.md](validator/README.md) and the
 | Authentication and identity (OIDC, JWT audiences, immutable fields) | [context/infrastructure/validator-auth-and-identity.md](context/infrastructure/validator-auth-and-identity.md) |
 | Monitoring and traffic (scrape targets, traffic gauges, log rotation) | [context/infrastructure/validator-monitoring-and-traffic.md](context/infrastructure/validator-monitoring-and-traffic.md) |
 | Upgrades and recovery (guarded upgrade, backup/restore, host migration) | [context/infrastructure/validator-upgrades-and-recovery.md](context/infrastructure/validator-upgrades-and-recovery.md) |
+| Security (advertised version, Wallet Gateway, keys, incident stop) | [context/infrastructure/validator-security.md](context/infrastructure/validator-security.md) |
 | Traffic metering, purchase, and top-up | [context/infrastructure/traffic-operations.md](context/infrastructure/traffic-operations.md) |
 | Splice deployment and operator doc index | [context/infrastructure/splice-validator-ops.md](context/infrastructure/splice-validator-ops.md) |
 
